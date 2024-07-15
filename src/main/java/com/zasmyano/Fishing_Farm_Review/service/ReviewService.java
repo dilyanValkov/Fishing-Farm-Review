@@ -6,7 +6,7 @@ import com.zasmyano.Fishing_Farm_Review.domain.dto.ReviewDto;
 import java.util.List;
 
 public interface ReviewService {
-    void createReview(AddReviewDto addReviewDto);
+    Long createReview(AddReviewDto addReviewDto);
 
     void deleteReview(Long reviewId);
 

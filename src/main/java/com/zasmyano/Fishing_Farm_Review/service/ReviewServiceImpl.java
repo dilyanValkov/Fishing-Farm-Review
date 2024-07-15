@@ -4,6 +4,7 @@ import com.zasmyano.Fishing_Farm_Review.domain.Review;
 import com.zasmyano.Fishing_Farm_Review.domain.dto.AddReviewDto;
 import com.zasmyano.Fishing_Farm_Review.domain.dto.ReviewDto;
 import com.zasmyano.Fishing_Farm_Review.repository.ReviewRepository;
+import com.zasmyano.Fishing_Farm_Review.service.exception.ObjectNotFountException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -18,8 +19,9 @@ public class ReviewServiceImpl implements ReviewService {
     private final ModelMapper modelMapper;
 
     @Override
-    public void createReview(AddReviewDto addReviewDto) {
-    this.reviewRepository.save(this.modelMapper.map(addReviewDto, Review.class));
+    public Long createReview(AddReviewDto addReviewDto) {
+        Review review = modelMapper.map(addReviewDto, Review.class);
+        return reviewRepository.save(review).getId();
     }
 
     @Override
@@ -28,11 +30,10 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-
     public ReviewDto getReviewById(Long id) {
         return reviewRepository.findById(id)
                 .map(review -> modelMapper.map(review, ReviewDto.class))
-                .orElseThrow(()-> new IllegalArgumentException("Review not found!"));
+                .orElseThrow(()-> new ObjectNotFountException ("Review with id " + id + " is not found!", "/review/add/" + id));
     }
 
     @Override
@@ -44,7 +45,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public List<ReviewDto> getAllReviewsByUserId(Long userId) {
-      return this.reviewRepository.findAllByUsedId(userId)
+      return this.reviewRepository.findAllByUser(userId)
               .stream().map(review -> modelMapper.map(review,ReviewDto.class))
               .toList();
     }

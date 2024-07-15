@@ -3,15 +3,18 @@ package com.zasmyano.Fishing_Farm_Review.web;
 import com.zasmyano.Fishing_Farm_Review.domain.dto.AddReviewDto;
 import com.zasmyano.Fishing_Farm_Review.domain.dto.ReviewDto;
 import com.zasmyano.Fishing_Farm_Review.service.ReviewService;
+import com.zasmyano.Fishing_Farm_Review.service.exception.ObjectNotFountException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/reviews")
+@RequestMapping("/review")
 public class ReviewController {
 
     private final ReviewService reviewService;
@@ -24,7 +27,7 @@ public class ReviewController {
     @DeleteMapping("/{id}")
     public ResponseEntity<ReviewDto> deleteById(@PathVariable("id") Long id){
        reviewService.deleteReview(id);
-       return ResponseEntity.ok().build();
+       return ResponseEntity.noContent().build();
     }
 
     @GetMapping
@@ -34,13 +37,21 @@ public class ReviewController {
 
     @PostMapping("/add")
     public ResponseEntity<ReviewDto> createOffer(@RequestBody AddReviewDto reviewDto) {
-        reviewService.createReview(reviewDto);
-        return ResponseEntity.ok().build();
+        Long reviewId = reviewService.createReview(reviewDto);
+
+        return ResponseEntity.created(ServletUriComponentsBuilder
+                .fromCurrentRequest().path("/{id}").buildAndExpand(reviewId).toUri()).build();
     }
 
-    @GetMapping("/user{id}")
-    public ResponseEntity<List<ReviewDto>>getAllUserReviews(@PathVariable("id")Long id){
+    @GetMapping("/user/{id}")
+    public ResponseEntity<List<ReviewDto>>getAllUserReviews(@PathVariable("id") Long id){
         return ResponseEntity.ok(reviewService.getAllReviewsByUserId(id));
+    }
+
+    @ExceptionHandler(ObjectNotFountException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public BaseExceptionInfo objectNotFountException(ObjectNotFountException objectNotFountException){
+        return new BaseExceptionInfo(objectNotFountException.getMessage(), objectNotFountException.getUrl());
     }
 }
 

@@ -11,5 +11,5 @@ public class AddReviewDto {
 
     private String comment;
 
-    private Long usedId;
+    private Long user;
 }
