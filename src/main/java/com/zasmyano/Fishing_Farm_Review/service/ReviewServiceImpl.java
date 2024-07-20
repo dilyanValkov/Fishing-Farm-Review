@@ -5,6 +5,7 @@ import com.zasmyano.Fishing_Farm_Review.domain.dto.AddReviewDto;
 import com.zasmyano.Fishing_Farm_Review.domain.dto.ReviewDto;
 import com.zasmyano.Fishing_Farm_Review.repository.ReviewRepository;
 import com.zasmyano.Fishing_Farm_Review.service.exception.ObjectNotFountException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -25,8 +26,9 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public void deleteReview(Long reviewId) {
-        this.reviewRepository.deleteById(reviewId);
+    @Transactional
+    public void deleteAllReviews(Long id) {
+        this.reviewRepository.deleteAllByUser(id);
     }
 
     @Override
