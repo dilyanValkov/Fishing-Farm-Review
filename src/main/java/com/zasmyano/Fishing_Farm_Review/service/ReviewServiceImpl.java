@@ -27,8 +27,13 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional
-    public void deleteAllReviews(Long id) {
+    public void deleteAllUserReviews(Long id) {
         this.reviewRepository.deleteAllByUser(id);
+    }
+
+    @Override
+    public void deleteReviewById(Long reviewId) {
+        this.reviewRepository.deleteById(reviewId);
     }
 
     @Override

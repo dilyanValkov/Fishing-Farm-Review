@@ -19,34 +19,51 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ReviewDto> findById(@PathVariable("id") Long id){
-        return ResponseEntity.ok(reviewService.getReviewById(id));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ReviewDto> deleteById(@PathVariable("id") Long id){
-       reviewService.deleteAllReviews(id);
-       return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping
-    public ResponseEntity<List<ReviewDto>> getAllReviews(){
-        return ResponseEntity.ok(reviewService.getAllReviews());
-    }
-
     @PostMapping("/add")
-    public ResponseEntity<ReviewDto> createOffer(@RequestBody AddReviewDto reviewDto) {
+    public ResponseEntity<ReviewDto> createReview(@RequestBody AddReviewDto reviewDto) {
         Long reviewId = reviewService.createReview(reviewDto);
 
         return ResponseEntity.created(ServletUriComponentsBuilder
                 .fromCurrentRequest().path("/{id}").buildAndExpand(reviewId).toUri()).build();
     }
 
+
+    @GetMapping
+    public ResponseEntity<List<ReviewDto>> getAllReviews(){
+        return ResponseEntity.ok(reviewService.getAllReviews());
+    }
+
+
     @GetMapping("/user/{id}")
     public ResponseEntity<List<ReviewDto>>getAllUserReviews(@PathVariable("id") Long id){
         return ResponseEntity.ok(reviewService.getAllReviewsByUserId(id));
     }
+
+
+    @DeleteMapping("delete/user/{id}")
+    public ResponseEntity<ReviewDto> deleteByUserId(@PathVariable("id") Long id){
+        reviewService.deleteAllUserReviews(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity<ReviewDto> deleteById(@PathVariable("id") Long id){
+        reviewService.deleteReviewById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ReviewDto> findById(@PathVariable("id") Long id){
+        return ResponseEntity.ok(reviewService.getReviewById(id));
+    }
+
+
+
+
+
+
+
 
     @ExceptionHandler(ObjectNotFountException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)

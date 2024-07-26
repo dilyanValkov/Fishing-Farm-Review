@@ -8,7 +8,9 @@ import java.util.List;
 public interface ReviewService {
     Long createReview(AddReviewDto addReviewDto);
 
-    void deleteAllReviews(Long reviewId);
+    void deleteAllUserReviews(Long Id);
+
+    void deleteReviewById(Long reviewId);
 
     ReviewDto getReviewById(Long id);
 
